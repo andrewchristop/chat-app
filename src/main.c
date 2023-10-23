@@ -54,7 +54,7 @@ void serverMenu(void){
       
       do{
         printf("\nPort numbers below 1025 are reserved. Make sure you have super-user privileges!!");
-        printf("ARe you sure you want to continue (y/n): ");
+        printf("Are you sure you want to continue (y/n): ");
         scanf(" %c", &response);
 
         if (response == 'y' || response == 'Y'){
