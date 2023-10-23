@@ -26,6 +26,8 @@ int server(int portnum){
   
   if (listen(sockfd, BACKLOG) != -1){
     printf("Success! Listening at port %s... (Ctrl-C to quit)\n", port);
+  }else{
+    perror("listen");
   }
 
   addr_size = sizeof their_addr;
