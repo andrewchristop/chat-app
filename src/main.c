@@ -31,10 +31,47 @@ int showMenu(int choice){
   return(choice);
 }
 
+int checkPort(int portnum){
+  if (portnum <= 1025){
+    return(0);
+  }else{
+    return(1);
+  }
+}
+
 void serverMenu(void){
   int portnum = 0;
-  printf("\nPlease enter a port number: ");
-  scanf("%d", &portnum);
+  char response = 'a';
+  int ctl = 0;
+
+  do {
+    printf("\nPlease enter a port number: ");
+    scanf("%d", &portnum);
+    ctl = checkPort(portnum);
+
+    if (ctl == 0){
+      int control = 0;
+      
+      do{
+        printf("\nPort numbers below 1025 are reserved. Make sure you have super-user privileges!!");
+        printf("ARe you sure you want to continue (y/n): ");
+        scanf(" %c", &response);
+
+        if (response == 'y' || response == 'Y'){
+          ctl = 1;
+          control = 1;
+        }else if (response == 'n' || response == 'N'){
+          ctl = 0;
+          control = 1;
+        }else{
+          printf("\nInvalid input! What is wrong with you :(\n");
+          control = 0;
+        }
+      }while(!control);
+    }
+
+  }while(!ctl);
+
   printf("\nLaunching server instance...\n");
   server(portnum);
 }
