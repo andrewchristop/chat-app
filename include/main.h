@@ -5,4 +5,5 @@
 int main(void);
 int showMenu(int);
 void serverMenu(void);
+void clientMenu(void);
 int checkPort(int);

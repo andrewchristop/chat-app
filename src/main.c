@@ -1,5 +1,6 @@
 #include "../include/main.h"
 #include "server.c"
+#include "client.c"
 
 int main(void){
   int choice = 0;
@@ -8,12 +9,12 @@ int main(void){
  do{
     choice = showMenu(choice);
 
-    if (choice != 1 && choice != 2){
-      printf("\nInput entered is invalid! Please try again!!\n");
-    }
-
     if (choice == 1){
       serverMenu(); 
+    }else if (choice == 2){
+      clientMenu();     
+    }else{
+      printf("\nInput entered is invalid! Please try again!!\n");
     }
 
   }while (choice != 1 && choice != 2);
@@ -27,7 +28,7 @@ int showMenu(int choice){
   printf("1. Start a server instance\n");
   printf("2. Start a client instance\n");
   printf("Input: ");
-  scanf("%d", &choice);
+  scanf(" %d", &choice);
   return(choice);
 }
 
@@ -39,6 +40,17 @@ int checkPort(int portnum){
   }
 }
 
+void clientMenu(void){
+  char host[100];
+  int port;
+  printf("\nEnter a target host to connect to: ");
+  scanf(" %s", host);
+  printf("\nEnter target port to connect to: ");
+  scanf(" %d", &port);
+  printf("\nLaunching client instance....\n");
+  client(host, port);
+}
+
 void serverMenu(void){
   int portnum = 0;
   char response = 'a';
@@ -46,7 +58,7 @@ void serverMenu(void){
 
   do {
     printf("\nPlease enter a port number: ");
-    scanf("%d", &portnum);
+    scanf(" %d", &portnum);
     ctl = checkPort(portnum);
 
     if (ctl == 0){
