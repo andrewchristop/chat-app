@@ -9,7 +9,7 @@ int client(char *host, int portnum){
   int len;
   int bytes_sent;
   char port[6];
-  char *msg = "Hello from client";
+  char msg[1000];
 
   memset(&hints, 0, sizeof hints);
   hints.ai_family = AF_UNSPEC;
@@ -23,6 +23,8 @@ int client(char *host, int portnum){
   if (connect(sockfd, res->ai_addr, res->ai_addrlen) != -1){
     printf("\nConnection successful!\n");
   }
+  printf("\nclient:");
+  scanf(" %s", msg);
   len = strlen(msg);
   bytes_sent = send(sockfd, msg, len, 0);
 
