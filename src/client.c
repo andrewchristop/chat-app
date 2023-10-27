@@ -23,10 +23,17 @@ int client(char *host, int portnum){
   if (connect(sockfd, res->ai_addr, res->ai_addrlen) != -1){
     printf("\nConnection successful!\n");
   }
-  printf("\nclient:");
-  scanf(" %s", msg);
-  len = strlen(msg);
-  bytes_sent = send(sockfd, msg, len, 0);
+
+  do {
+    printf("\nclient:");
+    scanf(" %[^\n]s", msg);
+    if (strcmp(msg, TERM) == 0){
+      break;
+    }
+    len = strlen(msg);
+    bytes_sent = send(sockfd, msg, len, 0);
+  }while(1);
+
 
   close(sockfd);
   

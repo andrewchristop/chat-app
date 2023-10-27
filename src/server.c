@@ -31,11 +31,19 @@ int server(int portnum){
   }
 
   addr_size = sizeof their_addr;
-  new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &addr_size);
-  numbytes = recv(new_fd, buf, MAXDATASIZE - 1, 0);
-  //printf("%d", numbytes);
-  buf[numbytes] = '\0';
-  printf("%s\n", buf);
+  while((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &addr_size))){
+    int pid;
+    if ((pid = fork()) == 0){
+      while ((numbytes = recv(new_fd, buf, MAXDATASIZE - 1, 0)) > 0){
+       buf[numbytes] = '\0';
+       printf("%s\n", buf);
+//       buf = "";
+      }
+      exit(0);
+    }
+  }
+  
+
   freeaddrinfo(res);
   close(new_fd);
   shutdown(sockfd, SHUT_RDWR);

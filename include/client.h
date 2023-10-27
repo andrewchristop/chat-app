@@ -7,5 +7,6 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#define TERM "!q"
 
 int client(char *, int);
