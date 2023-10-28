@@ -3,6 +3,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <pthread.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <arpa/inet.h>
@@ -12,3 +13,4 @@
 #define MAXDATASIZE 1024
 
 int server(int);
+void *serverSend(void *);
