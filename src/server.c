@@ -39,7 +39,6 @@ int server(int portnum){
        printf("%s\n", buf);
 //       buf = "";
       }
-      exit(0);
     }
   }
   
