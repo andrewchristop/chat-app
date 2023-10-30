@@ -40,12 +40,12 @@ int server(int portnum){
     perror("listen");
   }
 
-  pthread_create(&thread1, NULL, serverSend, NULL);
+ // pthread_create(&thread1, NULL, serverSend, NULL);
 
   addr_size = sizeof their_addr;
   while((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &addr_size))){
     int pid;
-    pthread_create(&thread1, NULL, serverSend, NULL);
+//    pthread_create(&thread1, NULL, serverSend, NULL);
     if ((pid = fork()) == 0){
       while ((numbytes = recv(new_fd, buf, MAXDATASIZE - 1, 0)) > 0){
        buf[numbytes] = '\0';
