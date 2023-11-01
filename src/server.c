@@ -4,12 +4,34 @@ struct addrinfo hints;
 struct addrinfo *res;
 struct sockaddr_storage their_addr;
 
-void *serverSend(void *arg){
-  char input[1024];
-  do{
-    printf("\nServer:");
-    scanf(" %s", input);
-  }while(strcmp(input, "!q") != 0);
+void *sendMessage(void *socket){
+  int sock_fd = (int)socket;
+  char message[1024];
+  while(fgets(message, 1024, stdin) != NULL){
+    
+    printf("You: %s", message);
+
+    if ((send(sock_fd, message, strlen(message), 0) < 0)){
+      perror("Send failed");
+      exit(1);
+    }
+  }
+  return(NULL);
+}
+
+void *receive(void *socket){
+  int sock_fd = (int)socket;
+  int numbytes;
+  char buf[1024];
+  
+  memset(buf, 0, 1024);
+
+  while (1){
+    if ((numbytes = recv(sock_fd, buf, MAXDATASIZE - 1, 0)) > 0){
+     buf[numbytes] = '\0';
+     printf("%s\n", buf);
+    } 
+  }
   return(NULL);
 }
 
@@ -21,7 +43,7 @@ int server(int portnum){
   char port[6];
   socklen_t addr_size;
   pthread_t thread1;
-  
+  pthread_t thread2;  
 
   memset(&hints, 0, sizeof hints);
   hints.ai_family = AF_UNSPEC;
@@ -40,26 +62,16 @@ int server(int portnum){
     perror("listen");
   }
 
-  pthread_create(&thread1, NULL, serverSend, NULL);
-
   addr_size = sizeof their_addr;
-  while((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &addr_size))){
-    int pid;
-    pthread_create(&thread1, NULL, serverSend, NULL);
-    if ((pid = fork()) == 0){
-      while ((numbytes = recv(new_fd, buf, MAXDATASIZE - 1, 0)) > 0){
-       buf[numbytes] = '\0';
-       printf("%s\n", buf);
-//       buf = "";
-      }
-    }
-  }
-
-//  pthread_join(thread1, NULL);
-
+  new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &addr_size);
+  pthread_create(&thread1, NULL, receive, (void *)new_fd);
+  pthread_create(&thread2, NULL, sendMessage, (void *)new_fd);
+  pthread_join(thread1, NULL);
+  pthread_join(thread2, NULL);
   freeaddrinfo(res);
-  close(new_fd);
-  shutdown(sockfd, SHUT_RDWR);
+  //close(new_fd);
+  //shutdown(sockfd, SHUT_RDWR);
+  //pthread_exit(NULL);
 
   return(0);
 }
