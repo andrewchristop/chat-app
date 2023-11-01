@@ -13,4 +13,5 @@
 #define MAXDATASIZE 1024
 
 int server(int);
-void *serverSend(void *);
+void *sendMessage(void*);
+void *receive(void *);
