@@ -57,8 +57,8 @@ int client(char *host, int portnum){
     printf("\nConnection successful!\n");
   }
   
-  pthread_create(&thread1, NULL, sendMessageClient, (void *)sockfd);
-  pthread_create(&thread1, NULL, receiveMessageClient, (void*)sockfd);
+  pthread_create(&thread1, NULL, receiveMessageClient, (void *)sockfd);
+  pthread_create(&thread2, NULL, sendMessageClient, (void*)sockfd);
   pthread_join(thread1, NULL);
   pthread_join(thread2, NULL);
 
