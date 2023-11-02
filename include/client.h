@@ -10,3 +10,5 @@
 #define TERM "!q"
 
 int client(char *, int);
+void *sendMessageClient(void *);
+void *receiveMessageClient(void *);

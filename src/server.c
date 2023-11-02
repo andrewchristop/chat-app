@@ -6,13 +6,11 @@ struct sockaddr_storage their_addr;
 
 void *sendMessage(void *socket){
   int sock_fd = (int)socket;
-  char message[1024];
+  char message[1024] = "";
   while(fgets(message, 1024, stdin) != NULL){
     
-    printf("You: %s", message);
-
     if ((send(sock_fd, message, strlen(message), 0) < 0)){
-      perror("Send failed");
+      perror("Send failed no clients in the room");
       exit(1);
     }
   }
