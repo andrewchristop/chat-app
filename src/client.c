@@ -27,9 +27,7 @@ void *receiveMessageClient(void *socket){
   while(1){
     if ((numbytes = recv(sock_fd, buf, 1023, 0)) > 0){
       buf[numbytes] = '\0';
-      if (buf[0] != '\0'){
-        printf("Server: %s\n", buf);
-      }
+      printf("Server: %s\n", buf);
     }
   }
   return(NULL);
