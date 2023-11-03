@@ -1,70 +1,58 @@
 #include "../include/client.h"
 
-struct addrinfo hints;
-struct addrinfo *res;
+#define MAX_MESSAGE_SIZE 1024
 
-void *sendMessageClient(void *socket){
-  int sock_fd = (int)socket;
-  int bytes_sent;
-  int len;
-  char message[1024] = "";  
-  while(fgets(message, 1024, stdin) != NULL){ 
-    if ((send(sock_fd, message, strlen(message), 0) < 0)){
-      perror("Send failed");
+void *receiveMessage(void *clientSocket) {
+  int sock_fd = *((int *)clientSocket);
+  char message[MAX_MESSAGE_SIZE];
+  int bytesRead;
+
+  while (1) {
+    bytesRead = recv(sock_fd, message, MAX_MESSAGE_SIZE, 0);
+    if (bytesRead <= 0) {
+      // Handle server disconnect or error
+      printf("Server disconnected. Exiting.\n");
+      close(sock_fd);
       exit(1);
+    } else {
+      // Process the received message (you can modify this part)
+      message[bytesRead] = '\0';
+      printf("Server: %s\n", message);
     }
   }
-
-  return(NULL);
+  return NULL;
 }
 
-void *receiveMessageClient(void *socket){
-  int sock_fd = (int)socket;
-  int numbytes;
-  char buf[1024];
-
-  memset(buf, 0, 1024);
-  while(1){
-    if ((numbytes = recv(sock_fd, buf, 1023, 0)) > 0){
-      buf[numbytes] = '\0';
-      printf("Server: %s\n", buf);
-    }
-  }
-  return(NULL);
-}
-
-int client(char *host, int portnum){
-  int status;
+int client(char *host, int portnum) {
   int sockfd;
-  int val; 
-  int len;
-  int bytes_sent;
-  char port[6];
-  char msg[1000];
-  pthread_t thread1;
-  pthread_t thread2;
+  struct sockaddr_in serverAddr;
 
-  memset(&hints, 0, sizeof hints);
-  hints.ai_family = AF_UNSPEC;
-  hints.ai_socktype = SOCK_STREAM;
-  
-  sprintf(port, "%d", portnum); 
-
-  status = getaddrinfo(host, port, &hints, &res);
-
-  sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-  if (connect(sockfd, res->ai_addr, res->ai_addrlen) != -1){
-    printf("\nConnection successful!\n");
+  sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  if (sockfd < 0) {
+    perror("Socket creation failed");
+    return 1;
   }
-  
-  pthread_create(&thread1, NULL, receiveMessageClient, (void *)sockfd);
-  pthread_create(&thread2, NULL, sendMessageClient, (void*)sockfd);
-  pthread_join(thread1, NULL);
-  pthread_join(thread2, NULL);
 
+  serverAddr.sin_family = AF_INET;
+  serverAddr.sin_port = htons(portnum);
+  serverAddr.sin_addr.s_addr = inet_addr(host);
 
+  if (connect(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0) {
+    perror("Connection failed");
+    return 1;
+  }
+
+  pthread_t thread;
+  pthread_create(&thread, NULL, receiveMessage, &sockfd);
+
+  char message[MAX_MESSAGE_SIZE];
+  while (1) {
+    fgets(message, MAX_MESSAGE_SIZE, stdin);
+    send(sockfd, message, strlen(message), 0);
+  }
+
+  // Cleanup and close client socket
   close(sockfd);
-  
-
-  return(0);
+  return 0;
 }
+
