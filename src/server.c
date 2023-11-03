@@ -5,7 +5,8 @@
 #define MAX_MESSAGE_SIZE 1024
 
 int clients[MAX_CLIENTS]; // Array to store client sockets
-pthread_t threads[MAX_CLIENTS];
+pthread_t sendThreads[MAX_CLIENTS];
+pthread_t receiveThreads[MAX_CLIENTS];
 
 void *handleClient(void *clientSocket) {
   int clientSock = *((int *)clientSocket);
@@ -21,9 +22,26 @@ void *handleClient(void *clientSocket) {
     } else {
       // Process the received message (you can modify this part)
       message[bytesRead] = '\0';
-      printf("Client: %s\n", message);
+      printf("%s\n", message);
     }
   }
+  return NULL;
+}
+
+void *sendMessages(void *clientSocket) {
+  int sock_fd = *((int *)clientSocket);
+  char message[MAX_MESSAGE_SIZE];
+
+  while (1) {
+    fgets(message, MAX_MESSAGE_SIZE, stdin);
+
+    // Display the message locally
+    printf("You: %s", message);
+
+    // Send the message to the specific client
+    send(sock_fd, message, strlen(message), 0);
+  }
+
   return NULL;
 }
 
@@ -63,15 +81,15 @@ int server(int portnum) {
     }
 
     if (clientCount < MAX_CLIENTS) {
-      clients[clientCount] = new_fd;
-      pthread_create(&threads[clientCount], NULL, handleClient, &clients[clientCount]);
+      clients[clientCount] = new_fd; 
+      pthread_create(&receiveThreads[clientCount], NULL, handleClient, &clients[clientCount]);
+      pthread_create(&sendThreads[clientCount], NULL, sendMessages, &clients[clientCount]);
       clientCount++;
     } else {
       printf("Too many clients. Connection rejected.\n");
       close(new_fd);
     }
   }
-
   // Cleanup and close server socket
   close(sockfd);
   return 0;
