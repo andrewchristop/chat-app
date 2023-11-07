@@ -23,6 +23,16 @@ void *receiveMessage(void *clientSocket) {
   return NULL;
 }
 
+void *sendMessage(void *clientSocket){
+  char message[MAX_MESSAGE_SIZE];
+  int sock_fd = *((int *)clientSocket);
+  
+  while (1) {
+    fgets(message, MAX_MESSAGE_SIZE, stdin);
+    send(sock_fd, message, strlen(message), 0);
+  }
+}
+
 int client(char *host, int portnum) {
   int sockfd;
   struct sockaddr_in serverAddr;
@@ -43,13 +53,12 @@ int client(char *host, int portnum) {
   }
 
   pthread_t thread;
+  pthread_t thread_send;
   pthread_create(&thread, NULL, receiveMessage, &sockfd);
-
-  char message[MAX_MESSAGE_SIZE];
-  while (1) {
-    fgets(message, MAX_MESSAGE_SIZE, stdin);
-    send(sockfd, message, strlen(message), 0);
-  }
+  pthread_create(&thread_send, NULL, sendMessage, &sockfd);
+  
+  pthread_join(thread, NULL);
+  pthread_join(thread_send, NULL);
 
   // Cleanup and close client socket
   close(sockfd);

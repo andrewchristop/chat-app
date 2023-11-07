@@ -83,6 +83,7 @@ int server(int portnum) {
     if (clientCount < MAX_CLIENTS) {
       clients[clientCount] = new_fd; 
       pthread_create(&receiveThreads[clientCount], NULL, handleClient, &clients[clientCount]);
+      pthread_create(&sendThreads[clientCount], NULL, sendMessages, &clients[clientCount]);
       clientCount++;
     } else {
       printf("Too many clients. Connection rejected.\n");
