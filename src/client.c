@@ -2,9 +2,15 @@
 
 #define MAX_MESSAGE_SIZE 1024
 
-void *receiveMessage(void *clientSocket) {
-  int sock_fd = *((int *)clientSocket);
+typedef struct{
+  int socket;
+}thread_data;
+
+void *receiveMessage(void *threadData) {
+  int sock_fd;
   char message[MAX_MESSAGE_SIZE];
+  thread_data *pData = (thread_data*)threadData;
+  sock_fd = pData->socket;
   int bytesRead;
 
   while (1) {
@@ -54,7 +60,9 @@ int client(char *host, int portnum) {
 
   pthread_t thread;
   pthread_t thread_send;
-  pthread_create(&thread, NULL, receiveMessage, &sockfd);
+  thread_data data;
+  data.socket = sockfd;
+  pthread_create(&thread, NULL, receiveMessage, (void *) &data);
   pthread_create(&thread_send, NULL, sendMessage, &sockfd);
   
   pthread_join(thread, NULL);
