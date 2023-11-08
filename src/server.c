@@ -4,9 +4,15 @@
 #define MAX_CLIENTS 10
 #define MAX_MESSAGE_SIZE 1024
 
-int clients[MAX_CLIENTS]; // Array to store client sockets
+typedef struct{
+  int sock_fd;
+}ClientInfo;
+
+//int clients[MAX_CLIENTS]; // Array to store client sockets
 pthread_t sendThreads[MAX_CLIENTS];
 pthread_t receiveThreads[MAX_CLIENTS];
+
+ClientInfo clients[MAX_CLIENTS];
 
 void *handleClient(void *clientSocket) {
   int clientSock = *((int *)clientSocket);
@@ -81,9 +87,9 @@ int server(int portnum) {
     }
 
     if (clientCount < MAX_CLIENTS) {
-      clients[clientCount] = new_fd; 
-      pthread_create(&receiveThreads[clientCount], NULL, handleClient, &clients[clientCount]);
-      pthread_create(&sendThreads[clientCount], NULL, sendMessages, &clients[clientCount]);
+      clients[clientCount].sock_fd = new_fd; 
+      pthread_create(&receiveThreads[clientCount], NULL, handleClient, &clients[clientCount].sock_fd);
+      pthread_create(&sendThreads[clientCount], NULL, sendMessages, &clients[clientCount + 1].sock_fd);
       clientCount++;
     } else {
       printf("Too many clients. Connection rejected.\n");
