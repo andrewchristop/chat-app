@@ -41,6 +41,7 @@ void *sendMessage(void *clientSocket){
 
 int client(char *host, int portnum) {
   int sockfd;
+  char message[1024];
   struct sockaddr_in serverAddr;
 
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -58,15 +59,25 @@ int client(char *host, int portnum) {
     return 1;
   }
 
-  pthread_t thread;
-  pthread_t thread_send;
-  thread_data data;
-  data.socket = sockfd;
-  pthread_create(&thread, NULL, receiveMessage, (void *) &data);
-  pthread_create(&thread_send, NULL, sendMessage, &sockfd);
-  
-  pthread_join(thread, NULL);
-  pthread_join(thread_send, NULL);
+  while (1){
+    scanf("%s", &message[0]);
+    send(sockfd, message, strlen(message), 0);
+    if (recv(sockfd, message, 1024, 0) < 0){
+      printf("Error\n");
+    }else{
+      printf("Server: \t%s\n", message);
+    }
+  }
+
+ // pthread_t thread;
+ // pthread_t thread_send;
+ // thread_data data;
+ // data.socket = sockfd;
+ // pthread_create(&thread, NULL, receiveMessage, (void *) &data);
+ // pthread_create(&thread_send, NULL, sendMessage, &sockfd);
+ // 
+ // pthread_join(thread, NULL);
+ // pthread_join(thread_send, NULL);
 
   // Cleanup and close client socket
   close(sockfd);
