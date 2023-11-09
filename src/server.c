@@ -53,9 +53,10 @@ void *sendMessages(void *clientSocket) {
 
 int server(int portnum) {
   int sockfd, new_fd;
+  char message[1024];
   struct sockaddr_in serverAddr, clientAddr;
   socklen_t clientAddrLen = sizeof(clientAddr);
-
+  pid_t childpid;
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd < 0) {
     perror("Socket creation failed");
@@ -79,6 +80,7 @@ int server(int portnum) {
   printf("Listening for clients on port %d... (Ctrl-C to quit)\n", portnum);
 
   int clientCount = 0;
+  
   while (1) {
     new_fd = accept(sockfd, (struct sockaddr *)&clientAddr, &clientAddrLen);
     if (new_fd < 0) {
@@ -86,15 +88,26 @@ int server(int portnum) {
       continue;
     }
 
-    if (clientCount < MAX_CLIENTS) {
-      clients[clientCount].sock_fd = new_fd; 
-      pthread_create(&receiveThreads[clientCount], NULL, handleClient, &clients[clientCount].sock_fd);
-      pthread_create(&sendThreads[clientCount], NULL, sendMessages, &clients[clientCount].sock_fd);
-      clientCount++;
-    } else {
-      printf("Too many clients. Connection rejected.\n");
-      close(new_fd);
+    if((childpid == fork()) == 0){
+      close(sockfd);
+      while(1){
+        recv(new_fd, message, 1024, 0);
+        printf("%s\n", message);     
+        pthread_create(&sendThreads[clientCount], NULL, sendMessages, (void *)&new_fd);
+      }
     }
+
+    
+
+//    if (clientCount < MAX_CLIENTS) {
+//      clients[clientCount].sock_fd = new_fd; 
+//      pthread_create(&receiveThreads[clientCount], NULL, handleClient, &clients[clientCount].sock_fd);
+//      pthread_create(&sendThreads[clientCount], NULL, sendMessages, &clients[clientCount].sock_fd);
+//      clientCount++;
+//    } else {
+//      printf("Too many clients. Connection rejected.\n");
+//      close(new_fd);
+//    }
   }
   // Cleanup and close server socket
   close(sockfd);
