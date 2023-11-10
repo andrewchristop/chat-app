@@ -1,53 +1,47 @@
 #include "../include/server.h"
 
-
 #define MAX_CLIENTS 10
 #define MAX_MESSAGE_SIZE 1024
 
-typedef struct{
+typedef struct {
   int sock_fd;
-}ClientInfo;
+} ClientInfo;
 
-//int clients[MAX_CLIENTS]; // Array to store client sockets
-pthread_t sendThreads[MAX_CLIENTS];
-pthread_t receiveThreads[MAX_CLIENTS];
-
+int clientCount = 0;
+pthread_mutex_t mutex;
 ClientInfo clients[MAX_CLIENTS];
+
+void sendMessages(char *msg, int curr) {
+  int i;
+  pthread_mutex_lock(&mutex);
+  for (i = 0; i < clientCount; i++) {
+    if (clients[i].sock_fd != curr) {
+      if ((send(clients[i].sock_fd, msg, strlen(msg), 0) < 0)) {
+        printf("Sending failed \n");
+        continue;
+      }
+    }
+  }
+  pthread_mutex_unlock(&mutex);
+}
 
 void *handleClient(void *clientSocket) {
   int clientSock = *((int *)clientSocket);
-  char message[MAX_MESSAGE_SIZE];
+  char receiveMessage[MAX_MESSAGE_SIZE];
   int bytesRead;
 
   while (1) {
-    bytesRead = recv(clientSock, message, MAX_MESSAGE_SIZE, 0);
+    bytesRead = recv(clientSock, receiveMessage, MAX_MESSAGE_SIZE, 0);
     if (bytesRead <= 0) {
       // Handle client disconnect or error
       close(clientSock);
       pthread_exit(NULL);
     } else {
       // Process the received message (you can modify this part)
-      message[bytesRead] = '\0';
-      printf("%s\n", message);
+      receiveMessage[bytesRead] = '\0';
+      sendMessages(receiveMessage, clientSock);
     }
   }
-  return NULL;
-}
-
-void *sendMessages(void *clientSocket) {
-  int sock_fd = *((int *)clientSocket);
-  char message[MAX_MESSAGE_SIZE];
-
-  while (1) {
-    fgets(message, MAX_MESSAGE_SIZE, stdin);
-
-    // Display the message locally
-    printf("You: %s", message);
-
-    // Send the message to the specific client
-    send(sock_fd, message, strlen(message), 0);
-  }
-
   return NULL;
 }
 
@@ -55,6 +49,8 @@ int server(int portnum) {
   int sockfd, new_fd;
   struct sockaddr_in serverAddr, clientAddr;
   socklen_t clientAddrLen = sizeof(clientAddr);
+
+  pthread_t receiveThread;
 
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd < 0) {
@@ -78,7 +74,6 @@ int server(int portnum) {
 
   printf("Listening for clients on port %d... (Ctrl-C to quit)\n", portnum);
 
-  int clientCount = 0;
   while (1) {
     new_fd = accept(sockfd, (struct sockaddr *)&clientAddr, &clientAddrLen);
     if (new_fd < 0) {
@@ -87,10 +82,11 @@ int server(int portnum) {
     }
 
     if (clientCount < MAX_CLIENTS) {
-      clients[clientCount].sock_fd = new_fd; 
-      pthread_create(&receiveThreads[clientCount], NULL, handleClient, &clients[clientCount].sock_fd);
-      pthread_create(&sendThreads[clientCount], NULL, sendMessages, &clients[clientCount].sock_fd);
+      pthread_mutex_lock(&mutex);
+      clients[clientCount].sock_fd = new_fd;
       clientCount++;
+      pthread_create(&receiveThread, NULL, (void *)handleClient, &new_fd);
+      pthread_mutex_unlock(&mutex);
     } else {
       printf("Too many clients. Connection rejected.\n");
       close(new_fd);
