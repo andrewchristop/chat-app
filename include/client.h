@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#define MAX_MESSAGE_SIZE 1024
 #define TERM "!q"
 
 int client(char *, int);

@@ -9,8 +9,8 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-#define BACKLOG 10
-#define MAXDATASIZE 1024
+#define MAX_CLIENTS 10
+#define MAX_MESSAGE_SIZE 1024
 
 int server(int);
 void *handleClient(void *);

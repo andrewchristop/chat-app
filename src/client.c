@@ -1,7 +1,5 @@
 #include "../include/client.h"
 
-#define MAX_MESSAGE_SIZE 1024
-
 char message[MAX_MESSAGE_SIZE];
 
 void *receiveMessage(void *socket) {
@@ -28,7 +26,7 @@ void *receiveMessage(void *socket) {
 int client(char *host, int portnum) {
   int sockfd;
   int len;
-  char send_msg[1024];
+  char send_msg[MAX_MESSAGE_SIZE];
   struct sockaddr_in serverAddr;
   pthread_t receiveThread;
 
@@ -48,7 +46,7 @@ int client(char *host, int portnum) {
   }
   
   pthread_create(&receiveThread, NULL, (void *)receiveMessage, &sockfd);
-  while(fgets(message,1024,stdin) > 0){
+  while(fgets(message,MAX_MESSAGE_SIZE,stdin) > 0){
     strcpy(send_msg, message);
     len = write(sockfd, send_msg, strlen(send_msg));
     if (len < 0){

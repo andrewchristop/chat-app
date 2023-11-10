@@ -1,8 +1,5 @@
 #include "../include/server.h"
 
-#define MAX_CLIENTS 10
-#define MAX_MESSAGE_SIZE 1024
-
 typedef struct {
   int sock_fd;
 } ClientInfo;
