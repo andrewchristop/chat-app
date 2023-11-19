@@ -1,7 +1,7 @@
 #include "../include/server.h"
-#11/14
 typedef struct {
   int sock_fd;
+  char uname[50];
 } ClientInfo;
 
 int clientCount = 0;

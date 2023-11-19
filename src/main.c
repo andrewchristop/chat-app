@@ -42,13 +42,16 @@ int checkPort(int portnum){
 
 void clientMenu(void){
   char host[100];
+  char uname[50];
   int port;
   printf("\nEnter a target host to connect to: ");
   scanf(" %s", host);
   printf("\nEnter target port to connect to: ");
   scanf(" %d", &port);
+  printf("\nPlease enter username:");
+  scanf(" %s", uname);
   printf("\nLaunching client instance....\n");
-  client(host, port);
+  client(host, port, uname);
 }
 
 void serverMenu(void){

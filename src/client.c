@@ -23,7 +23,7 @@ void *receiveMessage(void *socket) {
 }
 
 
-int client(char *host, int portnum) {
+int client(char *host, int portnum, char uname[50]) {
   int sockfd;
   int len;
   char send_msg[MAX_MESSAGE_SIZE];
@@ -47,7 +47,9 @@ int client(char *host, int portnum) {
   
   pthread_create(&receiveThread, NULL, (void *)receiveMessage, &sockfd);
   while(fgets(message,MAX_MESSAGE_SIZE,stdin) > 0){
-    strcpy(send_msg, message);
+    strcpy(send_msg, uname);
+    strcat(send_msg, ":");
+    strcat(send_msg, message);
     len = write(sockfd, send_msg, strlen(send_msg));
     if (len < 0){
       printf("\n message not sent \n");

@@ -10,6 +10,6 @@
 #define MAX_MESSAGE_SIZE 1024
 #define TERM "!q"
 
-int client(char *, int);
+int client(char *, int, char []);
 void *sendMessage(void *);
 void *receiveMessage(void *);
