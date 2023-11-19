@@ -51,6 +51,7 @@ int client(char *host, int portnum, char uname[50]) {
     if (count == 0){
       strcpy(send_msg, "");
       len = write(sockfd, send_msg, strlen(send_msg));
+      count++;
     }else{
       strcpy(send_msg, uname);
       strcat(send_msg, ":");
