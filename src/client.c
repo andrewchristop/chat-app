@@ -49,8 +49,6 @@ int client(char *host, int portnum, char uname[50]) {
   pthread_create(&receiveThread, NULL, (void *)receiveMessage, &sockfd);
   while(fgets(message,MAX_MESSAGE_SIZE,stdin) > 0){
     if (count == 0){
-      strcpy(send_msg, "");
-      len = write(sockfd, send_msg, strlen(send_msg));
       count++;
     }else{
       strcpy(send_msg, uname);
