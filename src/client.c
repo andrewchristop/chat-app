@@ -26,6 +26,7 @@ void *receiveMessage(void *socket) {
 int client(char *host, int portnum, char uname[50]) {
   int sockfd;
   int len;
+  int count = 0;
   char send_msg[MAX_MESSAGE_SIZE];
   struct sockaddr_in serverAddr;
   pthread_t receiveThread;
@@ -47,9 +48,15 @@ int client(char *host, int portnum, char uname[50]) {
   
   pthread_create(&receiveThread, NULL, (void *)receiveMessage, &sockfd);
   while(fgets(message,MAX_MESSAGE_SIZE,stdin) > 0){
-    strcpy(send_msg, uname);
-    strcat(send_msg, ":");
-    strcat(send_msg, message);
+    if (count == 0){
+      strcpy(send_msg, uname);
+      strcat(send_msg, " has joined the server");
+      count++;
+    }else{
+      strcpy(send_msg, uname);
+      strcat(send_msg, ":");
+      strcat(send_msg, message);
+    }
     len = write(sockfd, send_msg, strlen(send_msg));
     if (len < 0){
       printf("\n message not sent \n");
