@@ -31,8 +31,7 @@ void *handleClient(void *clientSocket) {
   bytesRead = recv(clientSock, unameLoc, sizeof(unameLoc), 0);
 
   for(int i = 0; i < clientCount; i++){
-    if(clients[i].uname == unameLoc){
-      printf("No two users can have the same username. Please pick a new one\n");
+    if(strcmp(clients[i].uname, unameLoc) == 0){
       close(clientSock);
     }
   }
