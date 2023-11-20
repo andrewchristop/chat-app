@@ -45,6 +45,7 @@ int client(char *host, int portnum, char uname[50]) {
     perror("Connection failed");
     return 1;
   }else{
+    write(sockfd, uname, strlen(uname));
     pthread_create(&receiveThread, NULL, (void *)receiveMessage, &sockfd);
     while(fgets(message,MAX_MESSAGE_SIZE,stdin) > 0){
       if (count == 0){

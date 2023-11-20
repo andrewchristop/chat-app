@@ -26,7 +26,18 @@ void *handleClient(void *clientSocket) {
   int clientSock = *((int *)clientSocket);
   char receiveMessage[MAX_MESSAGE_SIZE];
   int bytesRead;
+  char unameLoc[50];
+  
+  bytesRead = recv(clientSock, unameLoc, sizeof(unameLoc), 0);
 
+  for(int i = 0; i < clientCount; i++){
+    if(clients[i].uname == unameLoc){
+      printf("No two users can have the same username. Please pick a new one\n");
+      close(clientSock);
+    }
+  }
+
+ strcpy(clients[clientCount].uname, unameLoc); 
   while (1) {
     bytesRead = recv(clientSock, receiveMessage, MAX_MESSAGE_SIZE, 0);
     if (bytesRead <= 0) {
