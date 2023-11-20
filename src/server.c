@@ -34,6 +34,7 @@ void *handleClient(void *clientSocket) {
     if(strcmp(clients[i].uname, unameLoc) == 0){
       char errormsg[100] = "No two users can have the same username!\n";
       send(clients[i].sock_fd, errormsg, strlen(errormsg), 0);
+      clientCount--;
       close(clientSock);
     }
   }
