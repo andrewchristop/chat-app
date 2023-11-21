@@ -1,12 +1,16 @@
 #include "../include/crypto.h"
 
-void processBlocks(const char *msg, size_t blockSize){
+
+void processBlocks(char *msg, size_t blockSize, char cipher[1024]){
+  unsigned char key[16] = "mysecretkey4444";
   size_t length = strlen(msg);
   AES_KEY aeskey;
   AES_set_encrypt_key(key, 128, &aeskey);
+  size_t size = 1024;
 
+  
   for (size_t i = 0; i < length; i += blockSize){
-    unsigned char ciphertext[16];
+    char ciphertext[16];
     size_t remainingLength = length - i;
     size_t currentBlockSize;
     
@@ -25,7 +29,15 @@ void processBlocks(const char *msg, size_t blockSize){
     }
 
     block[blockSize] = '\0';
-    AES_encrypt(block, ciphertext, key);
+    AES_encrypt((const unsigned char*)block, (unsigned char *)ciphertext, &aeskey);
+
+    if (i == 0){
+      strcpy(cipher, ciphertext);
+    }else{
+      strcat(cipher, ciphertext);
+    }
+
   }
+
 
 }

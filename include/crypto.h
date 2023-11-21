@@ -2,7 +2,8 @@
 #include <string.h>
 #include <openssl/aes.h>
 
-void processBlocks(const char *, size_t);
+
+void processBlocks(char *, size_t, char[]);
 void decryptMessage(const unsigned char *, const unsigned char *);
 void encryptMessage(const unsigned char *, const unsigned char *);
 

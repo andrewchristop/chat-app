@@ -1,4 +1,5 @@
 #include "../include/client.h"
+#include "../include/crypto.h"
 
 char message[MAX_MESSAGE_SIZE];
 
@@ -28,6 +29,7 @@ int client(char *host, int portnum, char uname[50]) {
   int len;
   int count = 0;
   char send_msg[MAX_MESSAGE_SIZE];
+  char cipher[MAX_MESSAGE_SIZE];
   struct sockaddr_in serverAddr;
   pthread_t receiveThread;
 
@@ -54,7 +56,8 @@ int client(char *host, int portnum, char uname[50]) {
         strcpy(send_msg, uname);
         strcat(send_msg, ":");
         strcat(send_msg, message);
-        len = write(sockfd, send_msg, strlen(send_msg));
+        processBlocks(send_msg, 16, cipher);
+        len = write(sockfd, cipher, strlen(cipher));
       }
       if (len < 0){
         printf("\n message not sent \n");
