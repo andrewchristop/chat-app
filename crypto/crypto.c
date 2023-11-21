@@ -6,8 +6,6 @@ void processBlocks(char *msg, size_t blockSize, char cipher[1024]){
   size_t length = strlen(msg);
   AES_KEY aeskey;
   AES_set_encrypt_key(key, 128, &aeskey);
-  size_t size = 1024;
-
   
   for (size_t i = 0; i < length; i += blockSize){
     char ciphertext[16];
