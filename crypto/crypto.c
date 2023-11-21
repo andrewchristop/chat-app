@@ -10,8 +10,7 @@ void processBlocks(char *msg, size_t blockSize, char cipher[1024]){
   AES_set_encrypt_key(key, 128, &aeskey);
   for (size_t i = 0; i < sizeIB; i += blockSize){
     memset(block, 0, sizeof(block));
-    memset(temp, 0, sizeof(cipher));
-    strncpy(block, msg, blockSize);
+    strncpy(block, msg + i, blockSize);
     AES_encrypt((const unsigned char *) block, temp, &aeskey);
     
     if (i == 0){
