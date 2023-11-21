@@ -56,7 +56,7 @@ int client(char *host, int portnum, char uname[50]) {
         strcpy(send_msg, uname);
         strcat(send_msg, ":");
         strcat(send_msg, message);
-        //processBlocks(send_msg, 16, cipher);
+        processBlocks(send_msg, 16, cipher);
         len = write(sockfd, send_msg, strlen(send_msg));
         //fflush(stdout);
       }
