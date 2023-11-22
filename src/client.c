@@ -2,6 +2,7 @@
 #include "../include/crypto.h"
 
 char message[MAX_MESSAGE_SIZE];
+char decrypt[MAX_MESSAGE_SIZE];
 
 void *receiveMessage(void *socket) {
   int sock_fd = *((int *)socket);
@@ -16,8 +17,9 @@ void *receiveMessage(void *socket) {
       exit(1);
     } else {
       // Process the received message (you can modify this part)
-      message[bytesRead] = '\0';
-      fputs(message, stdout);
+      decryptMessage(message, decrypt);
+      decrypt[bytesRead] = '\0';
+      fputs(decrypt, stdout);
     }
   }
   return NULL;
@@ -56,7 +58,7 @@ int client(char *host, int portnum, char uname[50]) {
         strcpy(send_msg, uname);
         strcat(send_msg, ":");
         strcat(send_msg, message);
-        processBlocks(send_msg, 16, cipher);
+        processBlocks(send_msg, cipher);
         len = write(sockfd, cipher, strlen(cipher));
         //fflush(stdout);
       }
