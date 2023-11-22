@@ -17,9 +17,9 @@ void *receiveMessage(void *socket) {
       exit(1);
     } else {
       // Process the received message (you can modify this part)
-      decryptMessage(message, decrypt);
-      decrypt[bytesRead] = '\0';
-      fputs(decrypt, stdout);
+      //decryptMessage(message, decrypt);
+      message[bytesRead] = '\0';
+      fputs(message, stdout);
     }
   }
   return NULL;
