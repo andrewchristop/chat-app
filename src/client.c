@@ -1,5 +1,5 @@
 #include "../include/client.h"
-#include "../include/crypto.h"
+//#include "../include/crypto.h"
 
 char message[MAX_MESSAGE_SIZE];
 char decrypt[MAX_MESSAGE_SIZE];
@@ -59,7 +59,7 @@ int client(char *host, int portnum, char uname[50]) {
         strcat(send_msg, ":");
         strcat(send_msg, message);
         //processBlocks(send_msg, cipher);
-        len = write(send_msg, cipher, strlen(send_msg));
+        len = write(sockfd, send_msg, strlen(send_msg));
         //fflush(stdout);
       }
       if (len < 0){
