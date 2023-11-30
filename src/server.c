@@ -1,5 +1,4 @@
 #include "../include/server.h"
-#include "../crypto/crypto.c"
 typedef struct {
   int sock_fd;
   char uname[50];
