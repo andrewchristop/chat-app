@@ -23,9 +23,10 @@ void *receiveMessage(void *socket) {
     } else {
       // Process the received message (you can modify this part)
       message[bytesRead] = '\0';
-      unsigned char decrypted[paddedLen];
-      decryptMessage(ciphertext, key, AES_BLOCK_SIZE, msgLen, paddedLen, decrypted);
-      fputs(decrypted, stdout);
+      //unsigned char decrypted[paddedLen];
+      //decryptMessage(ciphertext, key, AES_BLOCK_SIZE, msgLen, paddedLen, decrypted);
+      //fputs(decrypted, stdout);
+      fputs(message, stdout);
       //fprintf(stdout, "%.*s", (int)msgLen, decrypted);
     }
   }
@@ -67,7 +68,8 @@ int client(char *host, int portnum, char uname[50]) {
         msgLen = strlen(send_msg);
         paddedLen = encryptMessage(send_msg, key, msgLen, ciphertext);
         cipherLen = strlen(ciphertext);
-        len = write(sockfd, ciphertext, (int)cipherLen);
+        //len = write(sockfd, ciphertext, (int)cipherLen);
+        len = write(sockfd, send_msg, (int)msgLen);
       }
       if (len < 0){
         printf("\n message not sent \n");
