@@ -22,9 +22,9 @@ void *receiveMessage(void *socket) {
       exit(1);
     } else {
       // Process the received message (you can modify this part)
-      message[bytesRead] = '\0';
-      unsigned char decrypted[paddedLen];
-      decryptMessage(message, key, AES_BLOCK_SIZE, msgLen, paddedLen, decrypted);
+      message[bytesRead];
+      unsigned char decrypted[bytesRead];
+      decryptMessage(message, key, AES_BLOCK_SIZE, msgLen, bytesRead, decrypted);
       fputs(decrypted, stdout);
       //fputs(message, stdout);
       //fprintf(stdout, "%.*s", (int)msgLen, decrypted);
