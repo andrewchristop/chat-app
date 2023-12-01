@@ -1,6 +1,13 @@
 #include "../include/client.h"
+#include "../include/crypto.h"
+#include "../crypto/crypto.c"
 
 char message[MAX_MESSAGE_SIZE];
+size_t paddedLen;
+size_t cipherLen;
+size_t msgLen;
+const unsigned char key[16] = "mysecretkey1234";
+unsigned char ciphertext[MAX_MESSAGE_SIZE];
 
 void *receiveMessage(void *socket) {
   int sock_fd = *((int *)socket);
@@ -16,7 +23,10 @@ void *receiveMessage(void *socket) {
     } else {
       // Process the received message (you can modify this part)
       message[bytesRead] = '\0';
-      fputs(message, stdout);
+      unsigned char decrypted[paddedLen];
+      decryptMessage(ciphertext, key, AES_BLOCK_SIZE, msgLen, paddedLen, decrypted);
+      //fputs(decrypted, stdout);
+      fprintf(stdout, "%.*s", (int)msgLen, decrypted);
     }
   }
   return NULL;
@@ -54,7 +64,10 @@ int client(char *host, int portnum, char uname[50]) {
         strcpy(send_msg, uname);
         strcat(send_msg, ":");
         strcat(send_msg, message);
-        len = write(sockfd, send_msg, strlen(send_msg));
+        msgLen = strlen(send_msg);
+        paddedLen = encryptMessage(send_msg, key, msgLen, ciphertext);
+        cipherLen = strlen(ciphertext);
+        len = write(sockfd, ciphertext, (int)cipherLen);
       }
       if (len < 0){
         printf("\n message not sent \n");
