@@ -25,8 +25,8 @@ void *receiveMessage(void *socket) {
       message[bytesRead] = '\0';
       unsigned char decrypted[paddedLen];
       decryptMessage(ciphertext, key, AES_BLOCK_SIZE, msgLen, paddedLen, decrypted);
-      //fputs(decrypted, stdout);
-      fprintf(stdout, "%.*s", (int)msgLen, decrypted);
+      fputs(decrypted, stdout);
+      //fprintf(stdout, "%.*s", (int)msgLen, decrypted);
     }
   }
   return NULL;
