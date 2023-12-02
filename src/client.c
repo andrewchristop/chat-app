@@ -23,7 +23,7 @@ void *receiveMessage(void *socket) {
     } else {
       // Process the received message (you can modify this part)
       message[bytesRead] = '\0';
-      unsigned char decrypted[bytesRead];
+      unsigned char decrypted[MAX_MESSAGE_SIZE];
       decryptMessage(message, key, AES_BLOCK_SIZE, msgLen, bytesRead, decrypted);
       decrypted[bytesRead] = '\0';
       fputs(decrypted, stdout);
