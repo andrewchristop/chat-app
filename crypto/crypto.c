@@ -20,7 +20,7 @@ void decryptMessage(const unsigned char *ciphertext, const unsigned char *key, s
   AES_KEY aesKey;
   AES_set_decrypt_key(key, 128, &aesKey);
 
-  for(size_t i = 0; i < msgLen; i += AES_BLOCK_SIZE){
+  for(size_t i = 0; i < ciphertextLen; i += AES_BLOCK_SIZE){
     AES_decrypt(ciphertext + i, decrypted + i, &aesKey);
   }
   
