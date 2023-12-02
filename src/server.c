@@ -8,12 +8,12 @@ int clientCount = 0;
 pthread_mutex_t mutex;
 ClientInfo clients[MAX_CLIENTS];
 
-void sendMessages(char *msg, int curr) {
+void sendMessages(char *msg, int len, int curr) {
   int i;
   pthread_mutex_lock(&mutex);
   for (i = 0; i < clientCount; i++) {
     if (clients[i].sock_fd != curr) {
-      if ((send(clients[i].sock_fd, msg, strlen(msg), 0) < 0)) {
+      if ((send(clients[i].sock_fd, msg, len, 0) < 0)) {
         printf("Sending failed \n");
         continue;
       }
@@ -49,7 +49,7 @@ void *handleClient(void *clientSocket) {
     } else {
       // Process the received message (you can modify this part)
       receiveMessage[bytesRead] = '\0';
-      sendMessages(receiveMessage, clientSock);
+      sendMessages(receiveMessage, bytesRead, clientSock);
     }
   }
   return NULL;

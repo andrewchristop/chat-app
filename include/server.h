@@ -14,4 +14,4 @@
 
 int server(int);
 void *handleClient(void *);
-void sendMessages(char *, int);
+void sendMessages(char *, int, int);
