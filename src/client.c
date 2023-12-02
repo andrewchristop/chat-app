@@ -24,11 +24,13 @@ void *receiveMessage(void *socket) {
       // Process the received message (you can modify this part)
       message[bytesRead] = '\0';
       unsigned char decrypted[MAX_MESSAGE_SIZE];
+      pthread_mutex_lock(&mutex);
       decryptMessage(message, key, AES_BLOCK_SIZE, msgLen, bytesRead, decrypted);
       decrypted[bytesRead] = '\0';
       fputs(decrypted, stdout);
       //fputs(message, stdout);
       //fprintf(stdout, "%.*s", (int)msgLen, decrypted);
+      pthread_mutex_unlock(&mutex);
     }
   }
   return NULL;
