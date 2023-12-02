@@ -19,6 +19,12 @@ size_t encryptMessage(const unsigned char *plaintext, const unsigned char *key, 
 void decryptMessage(const unsigned char *ciphertext, const unsigned char *key, size_t ciphertextLen, size_t plaintextLen, size_t paddedLen, unsigned char decrypted[]) {
   AES_KEY aesKey;
   AES_set_decrypt_key(key, 128, &aesKey);
+  
+  char boiler[1024] = "No two users can have the same username!\n";
+
+  if(strcmp(ciphertext, boiler) == 0){
+    return;
+  }
 
   for(size_t i = 0; i < paddedLen; i += AES_BLOCK_SIZE){
     AES_decrypt(ciphertext + i, decrypted + i, &aesKey);
