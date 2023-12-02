@@ -26,9 +26,17 @@ void *receiveMessage(void *socket) {
       unsigned char decrypted[MAX_MESSAGE_SIZE];
       decryptMessage(message, key, AES_BLOCK_SIZE, msgLen, bytesRead, decrypted);
       decrypted[bytesRead] = '\0';
+      for (size_t i = 0; i < bytesRead; ++i){
+        if (decrypted[i] >= 32 && decrypted[i] <= 126){
+          printf("%c", decrypted[i]);
+        }
+      }
+      printf("\n");
+      //printf("0x%x\n", decrypted);
+      //printf("%.*s", (int)paddedLen, decrypted); 
       //printf("%.*s", (int)msgLen, decrypted);
-      fputs(decrypted, stdout);
-      //fwrite(decrypted, sizeof(decrypted),msgLen, stdout);
+      //fputs(decrypted, stdout);
+      //fwrite(decrypted, 1 ,msgLen, stdout);
       //fprintf(stdout, "%.*s", (int)msgLen, decrypted);
     }
   }
