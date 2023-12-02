@@ -23,6 +23,7 @@ void decryptMessage(const unsigned char *ciphertext, const unsigned char *key, s
   char boiler[1024] = "No two users can have the same username!\n";
 
   if(strcmp(ciphertext, boiler) == 0){
+    strcpy(decrypted, ciphertext);
     return;
   }
 
